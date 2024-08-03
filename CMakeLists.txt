@@ -9,6 +9,8 @@ add_library(ibverbs STATIC
 target_include_directories(ibverbs
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
 )
 
 target_link_libraries(ibverbs
@@ -23,9 +25,13 @@ add_library(rdmacm STATIC
 target_include_directories(rdmacm
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
 )
 
 target_link_libraries(rdmacm
     PRIVATE
         ${CMAKE_DL_LIBS}
 )
+
+add_subdirectory(examples EXCLUDE_FROM_ALL)
