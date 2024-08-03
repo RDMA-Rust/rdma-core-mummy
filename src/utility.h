@@ -2,6 +2,7 @@
 #define UTILITY_H
 
 #include <dlfcn.h>
+#include <errno.h>
 #include <stddef.h>
 
 #define LIKELY(x) __builtin_expect(!!(x), 1)
@@ -22,6 +23,15 @@
 		FUNC_PTR(_symbol) =                                            \
 			dlsym(_handle, STRINGIFY(_prefix##_symbol));           \
 		if (UNLIKELY(!FUNC_PTR(_symbol))) {                            \
+		}                                                              \
+	} while (0)
+
+// helper macro to return early when symbol is not loaded
+#define RETURN_NOT_EXIST(_symbol, ...)                                         \
+	do {                                                                   \
+		if (UNLIKELY(!FUNC_PTR(_symbol))) {                            \
+			errno = EOPNOTSUPP;                                    \
+			return __VA_ARGS__;                                    \
 		}                                                              \
 	} while (0)
 
