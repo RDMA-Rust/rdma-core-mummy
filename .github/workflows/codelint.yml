@@ -1,6 +1,11 @@
 name: Code Lint Check
 
-on: pull_request
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'
+  pull_request:
 
 jobs:
   clang-format:
