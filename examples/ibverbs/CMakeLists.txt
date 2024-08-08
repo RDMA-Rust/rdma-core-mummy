@@ -1,5 +1,6 @@
 # Shared example files
 add_library(ibverbs_tools STATIC pingpong.c)
+target_link_libraries(ibverbs_tools PRIVATE ibverbs)
 
 add_executable(ibv_asyncwatch asyncwatch.c)
 target_link_libraries(ibv_asyncwatch PRIVATE ibverbs)
