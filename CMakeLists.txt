@@ -32,6 +32,8 @@ target_include_directories(rdmacm
 )
 
 target_link_libraries(rdmacm
+    PUBLIC
+        ibverbs
     PRIVATE
         ${CMAKE_DL_LIBS}
 )
