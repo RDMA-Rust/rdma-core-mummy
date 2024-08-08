@@ -22,9 +22,11 @@ jobs:
         with:
           generator: Ninja
           c-compiler: clang
+          options: BUILD_EXAMPLES=ON
 
       - name: Configure and build (GCC)
         uses: threeal/cmake-action@main
         with:
           generator: Ninja
           c-compiler: gcc
+          options: BUILD_EXAMPLES=ON
