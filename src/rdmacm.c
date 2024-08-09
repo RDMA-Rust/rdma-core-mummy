@@ -81,7 +81,18 @@ DEFINE_WRAPPER_FUNC_RDMA(create_qp, int, struct rdma_cm_id *id,
 	return FUNC_PTR(create_qp)(id, pd, qp_init_attr);
 }
 
-void rdma_destroy_qp(struct rdma_cm_id *id);
+DEFINE_WRAPPER_FUNC_RDMA(create_qp_ex, int, struct rdma_cm_id *id,
+			 struct ibv_qp_init_attr_ex *qp_init_attr)
+{
+	RETURN_NOT_EXIST(create_qp_ex, -1);
+	return FUNC_PTR(create_qp_ex)(id, qp_init_attr);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(destroy_qp, void, struct rdma_cm_id *id)
+{
+	RETURN_NOT_EXIST(destroy_qp);
+	return FUNC_PTR(destroy_qp)(id);
+}
 
 DEFINE_WRAPPER_FUNC_RDMA(connect, int, struct rdma_cm_id *id,
 			 struct rdma_conn_param *conn_param)
@@ -116,10 +127,39 @@ DEFINE_WRAPPER_FUNC_RDMA(accept, int, struct rdma_cm_id *id,
 	return FUNC_PTR(accept)(id, conn_param);
 }
 
+DEFINE_WRAPPER_FUNC_RDMA(reject, int, struct rdma_cm_id *id,
+			 const void *private_data, uint8_t private_data_len)
+{
+	RETURN_NOT_EXIST(reject, -1);
+	return FUNC_PTR(reject)(id, private_data, private_data_len);
+}
+
 DEFINE_WRAPPER_FUNC_RDMA(disconnect, int, struct rdma_cm_id *id)
 {
 	RETURN_NOT_EXIST(disconnect, -1);
 	return FUNC_PTR(disconnect)(id);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(join_multicast, int, struct rdma_cm_id *id,
+			 struct sockaddr *addr, void *context)
+{
+	RETURN_NOT_EXIST(join_multicast, -1);
+	return FUNC_PTR(join_multicast)(id, addr, context);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(leave_multicast, int, struct rdma_cm_id *id,
+			 struct sockaddr *addr)
+{
+	RETURN_NOT_EXIST(leave_multicast, -1);
+	return FUNC_PTR(leave_multicast)(id, addr);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(join_multicast_ex, int, struct rdma_cm_id *id,
+			 struct rdma_cm_join_mc_attr_ex *mc_join_attr,
+			 void *context)
+{
+	RETURN_NOT_EXIST(join_multicast_ex, -1);
+	return FUNC_PTR(join_multicast_ex)(id, mc_join_attr, context);
 }
 
 DEFINE_WRAPPER_FUNC_RDMA(get_cm_event, int, struct rdma_event_channel *channel,
@@ -144,9 +184,19 @@ DEFINE_WRAPPER_FUNC_RDMA(event_str, const char *, enum rdma_cm_event_type event)
 	return FUNC_PTR(event_str)(event);
 }
 
-int rdma_set_option(struct rdma_cm_id *id, int level, int optname, void *optval,
-		    size_t optlen);
-int rdma_migrate_id(struct rdma_cm_id *id, struct rdma_event_channel *channel);
+DEFINE_WRAPPER_FUNC_RDMA(set_option, int, struct rdma_cm_id *id, int level,
+			 int optname, void *optval, size_t optlen)
+{
+	RETURN_NOT_EXIST(set_option, -1);
+	return FUNC_PTR(set_option)(id, level, optname, optval, optlen);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(migrate_id, int, struct rdma_cm_id *id,
+			 struct rdma_event_channel *channel)
+{
+	RETURN_NOT_EXIST(migrate_id, -1);
+	return FUNC_PTR(migrate_id)(id, channel);
+}
 
 DEFINE_WRAPPER_FUNC_RDMA(getaddrinfo, int, const char *node,
 			 const char *service, const struct rdma_addrinfo *hints,
@@ -194,15 +244,23 @@ static __attribute__((constructor)) void rdmacm_init(void)
 	LOAD_FUNC_PTR_RDMA(handle, resolve_addr);
 	LOAD_FUNC_PTR_RDMA(handle, resolve_route);
 	LOAD_FUNC_PTR_RDMA(handle, create_qp);
+	LOAD_FUNC_PTR_RDMA(handle, create_qp_ex);
+	LOAD_FUNC_PTR_RDMA(handle, destroy_qp);
 	LOAD_FUNC_PTR_RDMA(handle, connect);
 	LOAD_FUNC_PTR_RDMA(handle, establish);
 	LOAD_FUNC_PTR_RDMA(handle, listen);
 	LOAD_FUNC_PTR_RDMA(handle, get_request);
 	LOAD_FUNC_PTR_RDMA(handle, accept);
+	LOAD_FUNC_PTR_RDMA(handle, reject);
 	LOAD_FUNC_PTR_RDMA(handle, disconnect);
+	LOAD_FUNC_PTR_RDMA(handle, join_multicast);
+	LOAD_FUNC_PTR_RDMA(handle, leave_multicast);
+	LOAD_FUNC_PTR_RDMA(handle, join_multicast_ex);
 	LOAD_FUNC_PTR_RDMA(handle, get_cm_event);
 	LOAD_FUNC_PTR_RDMA(handle, ack_cm_event);
 	LOAD_FUNC_PTR_RDMA(handle, event_str);
+	LOAD_FUNC_PTR_RDMA(handle, set_option);
+	LOAD_FUNC_PTR_RDMA(handle, migrate_id);
 	LOAD_FUNC_PTR_RDMA(handle, getaddrinfo);
 	LOAD_FUNC_PTR_RDMA(handle, freeaddrinfo);
 	LOAD_FUNC_PTR_RDMA(handle, init_qp_attr);
