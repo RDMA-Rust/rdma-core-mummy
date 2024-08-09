@@ -175,8 +175,17 @@ DEFINE_WRAPPER_FUNC_RDMA(ack_cm_event, int, struct rdma_cm_event *event)
 	return FUNC_PTR(ack_cm_event)(event);
 }
 
-struct ibv_context **rdma_get_devices(int *num_devices);
-void rdma_free_devices(struct ibv_context **list);
+DEFINE_WRAPPER_FUNC_RDMA(get_devices, struct ibv_context **, int *num_devices)
+{
+	RETURN_NOT_EXIST(get_devices, NULL);
+	return FUNC_PTR(get_devices)(num_devices);
+}
+
+DEFINE_WRAPPER_FUNC_RDMA(free_devices, void, struct ibv_context **list)
+{
+	RETURN_NOT_EXIST(free_devices);
+	return FUNC_PTR(free_devices)(list);
+}
 
 DEFINE_WRAPPER_FUNC_RDMA(event_str, const char *, enum rdma_cm_event_type event)
 {
@@ -258,6 +267,8 @@ static __attribute__((constructor)) void rdmacm_init(void)
 	LOAD_FUNC_PTR_RDMA(handle, join_multicast_ex);
 	LOAD_FUNC_PTR_RDMA(handle, get_cm_event);
 	LOAD_FUNC_PTR_RDMA(handle, ack_cm_event);
+	LOAD_FUNC_PTR_RDMA(handle, get_devices);
+	LOAD_FUNC_PTR_RDMA(handle, free_devices);
 	LOAD_FUNC_PTR_RDMA(handle, event_str);
 	LOAD_FUNC_PTR_RDMA(handle, set_option);
 	LOAD_FUNC_PTR_RDMA(handle, migrate_id);
