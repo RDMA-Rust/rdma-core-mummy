@@ -42,8 +42,12 @@
 #include <stddef.h>
 #include <errno.h>
 #include <string.h>
+
+#ifndef __APPLE__
 #include <linux/types.h>
 #include <linux/if_ether.h>
+#endif
+
 #include <sys/types.h>
 #include <infiniband/verbs_api.h>
 
@@ -61,6 +65,7 @@
 extern "C" {
 #endif
 
+#define ETH_ALEN (6)
 
 union ibv_gid {
 	uint8_t			raw[16];

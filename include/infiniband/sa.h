@@ -35,7 +35,10 @@
 #define INFINIBAND_SA_H
 
 #include <infiniband/verbs.h>
+
+#ifndef __APPLE__
 #include <linux/types.h>
+#endif
 
 struct ibv_sa_path_rec {
 	/* reserved */

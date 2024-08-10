@@ -34,7 +34,10 @@
 #ifndef IB_USER_IOCTL_VERBS_H
 #define IB_USER_IOCTL_VERBS_H
 
+#ifndef __APPLE__
 #include <linux/types.h>
+#endif
+
 #include <rdma/ib_user_verbs.h>
 
 #ifndef RDMA_UAPI_PTR

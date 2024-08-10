@@ -34,19 +34,33 @@
 #ifndef _UMAD_H
 #define _UMAD_H
 
+#ifdef __APPLE__
+#include <machine/endian.h>
+#else
 #include <endian.h>
+#endif
+
 #include <stdint.h>
 #include <stdlib.h>
 #include <arpa/inet.h>
+
+#ifndef __APPLE__
 #include <linux/types.h> /* __be16, __be32 and __be64 */
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
+#ifndef __APPLE__
 typedef __be16 __attribute__((deprecated)) be16_t;
 typedef __be32 __attribute__((deprecated)) be32_t;
 typedef __be64 __attribute__((deprecated)) be64_t;
+#else
+typedef uint16_t __be16;
+typedef uint32_t __be32;
+typedef uint64_t __be64;
+#endif
 
 /*
  * A GID data structure that may be used in definitions of on-the-wire data
