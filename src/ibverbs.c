@@ -320,7 +320,7 @@ DEFINE_WRAPPER_FUNC_IBV(query_gid_type, int, struct ibv_context *context,
 	return FUNC_PTR(query_gid_type)(context, port_num, index, type);
 }
 
-static __attribute__((constructor)) void ibverbs_init(void)
+static __attribute__((constructor)) void mummy_ibverbs_init(void)
 {
 	void *handle = dlopen("libibverbs.so.1", RTLD_LAZY | RTLD_LOCAL);
 	if (UNLIKELY(!handle)) {

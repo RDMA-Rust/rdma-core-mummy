@@ -38,6 +38,17 @@ target_link_libraries(rdmacm
         ${CMAKE_DL_LIBS}
 )
 
+add_library(umad STATIC
+    src/umad.c
+)
+
+target_include_directories(umad
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
+)
+
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif(BUILD_EXAMPLES)
