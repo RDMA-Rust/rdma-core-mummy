@@ -7,6 +7,6 @@
 #define LOAD_FUNC_PTR_UMAD(_handle, _symbol)                                   \
 	LOAD_FUNC_PTR_COMMON(umad_, _handle, _symbol)
 
-static __attribute__((constructor)) void mummy_umad_init(void)
+static __attribute__((constructor)) void ibumad_init(void)
 {
 }

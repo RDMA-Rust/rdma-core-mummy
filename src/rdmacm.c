@@ -236,7 +236,7 @@ DEFINE_WRAPPER_FUNC_RDMA(create_srq, int, struct rdma_cm_id *id,
 	return FUNC_PTR(create_srq)(id, pd, attr);
 }
 
-static __attribute__((constructor)) void mummy_rdmacm_init(void)
+static __attribute__((constructor)) void rdmacm_init(void)
 {
 	void *handle = dlopen("librdmacm.so.1", RTLD_LAZY | RTLD_LOCAL);
 	if (UNLIKELY(!handle)) {

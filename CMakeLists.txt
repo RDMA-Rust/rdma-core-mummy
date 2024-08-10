@@ -38,11 +38,11 @@ target_link_libraries(rdmacm
         ${CMAKE_DL_LIBS}
 )
 
-add_library(umad STATIC
-    src/umad.c
+add_library(ibumad STATIC
+    src/ibumad.c
 )
 
-target_include_directories(umad
+target_include_directories(ibumad
     PUBLIC
         ${PROJECT_SOURCE_DIR}/include
     PRIVATE
