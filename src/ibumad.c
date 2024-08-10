@@ -44,6 +44,13 @@ DEFINE_WRAPPER_FUNC_UMAD(size, size_t, void)
 	return FUNC_PTR(size)();
 }
 
+DEFINE_WRAPPER_FUNC_UMAD(set_addr, int, void *umad, int dlid, int dqp, int sl,
+			 int qkey)
+{
+	RETURN_NOT_EXIST(set_addr, -EOPNOTSUPP);
+	return FUNC_PTR(set_addr)(umad, dlid, dqp, sl, qkey);
+}
+
 DEFINE_WRAPPER_FUNC_UMAD(set_pkey, int, void *umad, int pkey_index)
 {
 	RETURN_NOT_EXIST(set_pkey, -EOPNOTSUPP);
@@ -93,6 +100,7 @@ static __attribute__((constructor)) void ibumad_init(void)
 	LOAD_FUNC_PTR_UMAD(handle, close_port);
 	LOAD_FUNC_PTR_UMAD(handle, get_mad);
 	LOAD_FUNC_PTR_UMAD(handle, size);
+	LOAD_FUNC_PTR_UMAD(handle, set_addr);
 	LOAD_FUNC_PTR_UMAD(handle, set_pkey);
 	LOAD_FUNC_PTR_UMAD(handle, send);
 	LOAD_FUNC_PTR_UMAD(handle, recv);
