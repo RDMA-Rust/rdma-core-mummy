@@ -98,6 +98,13 @@ DEFINE_WRAPPER_FUNC_IBV(query_gid, int, struct ibv_context *context,
 	return FUNC_PTR(query_gid)(context, port_num, index, gid);
 }
 
+DEFINE_WRAPPER_FUNC_IBV(query_pkey, int, struct ibv_context *context,
+			uint8_t port_num, int index, __be16 *pkey)
+{
+	RETURN_NOT_EXIST(query_pkey, -1);
+	return FUNC_PTR(query_pkey)(context, port_num, index, pkey);
+}
+
 DEFINE_WRAPPER_FUNC_IBV(alloc_pd, struct ibv_pd *, struct ibv_context *context)
 {
 	RETURN_NOT_EXIST(alloc_pd, NULL);
@@ -265,6 +272,20 @@ DEFINE_WRAPPER_FUNC_IBV(destroy_ah, int, struct ibv_ah *ah)
 	return FUNC_PTR(destroy_ah)(ah);
 }
 
+DEFINE_WRAPPER_FUNC_IBV(attach_mcast, int, struct ibv_qp *qp,
+			const union ibv_gid *gid, uint16_t lid)
+{
+	RETURN_NOT_EXIST(attach_mcast, EOPNOTSUPP);
+	return FUNC_PTR(attach_mcast)(qp, gid, lid);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(detach_mcast, int, struct ibv_qp *qp,
+			const union ibv_gid *gid, uint16_t lid)
+{
+	RETURN_NOT_EXIST(detach_mcast, EOPNOTSUPP);
+	return FUNC_PTR(detach_mcast)(qp, gid, lid);
+}
+
 DEFINE_WRAPPER_FUNC_IBV(fork_init, int, void)
 {
 	RETURN_NOT_EXIST(fork_init, EOPNOTSUPP);
@@ -319,6 +340,7 @@ static __attribute__((constructor)) void ibverbs_init(void)
 	LOAD_FUNC_PTR_IBV(handle, query_device);
 	LOAD_FUNC_PTR_IBV(handle, query_port);
 	LOAD_FUNC_PTR_IBV(handle, query_gid);
+	LOAD_FUNC_PTR_IBV(handle, query_pkey);
 	LOAD_FUNC_PTR_IBV(handle, alloc_pd);
 	LOAD_FUNC_PTR_IBV(handle, dealloc_pd);
 	LOAD_FUNC_PTR_IBV(handle, reg_mr);
@@ -341,6 +363,8 @@ static __attribute__((constructor)) void ibverbs_init(void)
 	LOAD_FUNC_PTR_IBV(handle, init_ah_from_wc);
 	LOAD_FUNC_PTR_IBV(handle, create_ah_from_wc);
 	LOAD_FUNC_PTR_IBV(handle, destroy_ah);
+	LOAD_FUNC_PTR_IBV(handle, attach_mcast);
+	LOAD_FUNC_PTR_IBV(handle, detach_mcast);
 	LOAD_FUNC_PTR_IBV(handle, fork_init);
 	LOAD_FUNC_PTR_IBV(handle, event_type_str);
 	// from driver.h
