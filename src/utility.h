@@ -20,7 +20,7 @@
 
 #define LOAD_FUNC_PTR_COMMON(_prefix, _handle, _symbol)                        \
 	do {                                                                   \
-		FUNC_PTR(_symbol) =                                            \
+		*(void **)(&FUNC_PTR(_symbol)) =                               \
 			dlsym(_handle, STRINGIFY(_prefix##_symbol));           \
 		if (UNLIKELY(!FUNC_PTR(_symbol))) {                            \
 		}                                                              \
