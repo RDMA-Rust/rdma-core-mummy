@@ -98,6 +98,26 @@ DEFINE_WRAPPER_FUNC_IBV(query_gid, int, struct ibv_context *context,
 	return FUNC_PTR(query_gid)(context, port_num, index, gid);
 }
 
+DEFINE_WRAPPER_FUNC_COMMON(_ibv_, query_gid_ex, int,
+			   struct ibv_context *context, uint32_t port_num,
+			   uint32_t gid_index, struct ibv_gid_entry *entry,
+			   uint32_t flags, size_t entry_size)
+{
+	RETURN_NOT_EXIST(query_gid_ex, EOPNOTSUPP);
+	return FUNC_PTR(query_gid_ex)(context, port_num, gid_index, entry,
+				      flags, entry_size);
+}
+
+DEFINE_WRAPPER_FUNC_COMMON(_ibv_, query_gid_table, ssize_t,
+			   struct ibv_context *context,
+			   struct ibv_gid_entry *entries, size_t max_entries,
+			   uint32_t flags, size_t entry_size)
+{
+	RETURN_NOT_EXIST(query_gid_table, -EOPNOTSUPP);
+	return FUNC_PTR(query_gid_table)(context, entries, max_entries, flags,
+					 entry_size);
+}
+
 DEFINE_WRAPPER_FUNC_IBV(query_pkey, int, struct ibv_context *context,
 			uint8_t port_num, int index, __be16 *pkey)
 {
@@ -340,6 +360,8 @@ static __attribute__((constructor)) void ibverbs_init(void)
 	LOAD_FUNC_PTR_IBV(handle, query_device);
 	LOAD_FUNC_PTR_IBV(handle, query_port);
 	LOAD_FUNC_PTR_IBV(handle, query_gid);
+	LOAD_FUNC_PTR_COMMON(_ibv_, handle, query_gid_ex);
+	LOAD_FUNC_PTR_COMMON(_ibv_, handle, query_gid_table);
 	LOAD_FUNC_PTR_IBV(handle, query_pkey);
 	LOAD_FUNC_PTR_IBV(handle, alloc_pd);
 	LOAD_FUNC_PTR_IBV(handle, dealloc_pd);
