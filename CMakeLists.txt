@@ -49,6 +49,24 @@ target_include_directories(ibumad
         ${PROJECT_SOURCE_DIR}/src
 )
 
+add_library(mlx5 STATIC
+    src/mlx5.c
+)
+
+target_include_directories(mlx5
+    PUBLIC
+        ${PROJECT_SOURCE_DIR}/include
+    PRIVATE
+        ${PROJECT_SOURCE_DIR}/src
+)
+
+target_link_libraries(mlx5
+    PUBLIC
+        ibverbs
+    PRIVATE
+        ${CMAKE_DL_LIBS}
+)
+
 if(BUILD_EXAMPLES)
     add_subdirectory(examples)
 endif(BUILD_EXAMPLES)
