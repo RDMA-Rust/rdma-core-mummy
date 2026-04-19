@@ -173,6 +173,14 @@ DEFINE_WRAPPER_FUNC_IBV(reg_mr_iova2, struct ibv_mr *, struct ibv_pd *pd,
 	return ibv_reg_mr_iova(pd, addr, length, iova, access);
 }
 
+DEFINE_WRAPPER_FUNC_IBV(reg_dmabuf_mr, struct ibv_mr *, struct ibv_pd *pd,
+			uint64_t offset, size_t length, uint64_t iova, int fd,
+			int access)
+{
+	RETURN_NOT_EXIST(reg_dmabuf_mr, NULL);
+	return FUNC_PTR(reg_dmabuf_mr)(pd, offset, length, iova, fd, access);
+}
+
 DEFINE_WRAPPER_FUNC_IBV(dereg_mr, int, struct ibv_mr *mr)
 {
 	RETURN_NOT_EXIST(dereg_mr, EOPNOTSUPP);
@@ -200,6 +208,12 @@ DEFINE_WRAPPER_FUNC_IBV(create_cq, struct ibv_cq *, struct ibv_context *context,
 	RETURN_NOT_EXIST(create_cq, NULL);
 	return FUNC_PTR(create_cq)(context, cqe, cq_context, channel,
 				   comp_vector);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(resize_cq, int, struct ibv_cq *cq, int cqe)
+{
+	RETURN_NOT_EXIST(resize_cq, EOPNOTSUPP);
+	return FUNC_PTR(resize_cq)(cq, cqe);
 }
 
 DEFINE_WRAPPER_FUNC_IBV(destroy_cq, int, struct ibv_cq *cq)
@@ -233,6 +247,20 @@ DEFINE_WRAPPER_FUNC_IBV(destroy_srq, int, struct ibv_srq *srq)
 {
 	RETURN_NOT_EXIST(destroy_srq, EOPNOTSUPP);
 	return FUNC_PTR(destroy_srq)(srq);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(modify_srq, int, struct ibv_srq *srq,
+			struct ibv_srq_attr *srq_attr, int srq_attr_mask)
+{
+	RETURN_NOT_EXIST(modify_srq, EOPNOTSUPP);
+	return FUNC_PTR(modify_srq)(srq, srq_attr, srq_attr_mask);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(query_srq, int, struct ibv_srq *srq,
+			struct ibv_srq_attr *srq_attr)
+{
+	RETURN_NOT_EXIST(query_srq, EOPNOTSUPP);
+	return FUNC_PTR(query_srq)(srq, srq_attr);
 }
 
 DEFINE_WRAPPER_FUNC_IBV(create_qp, struct ibv_qp *, struct ibv_pd *pd,
@@ -312,10 +340,50 @@ DEFINE_WRAPPER_FUNC_IBV(fork_init, int, void)
 	return FUNC_PTR(fork_init)();
 }
 
+DEFINE_WRAPPER_FUNC_IBV(is_fork_initialized, enum ibv_fork_status, void)
+{
+	RETURN_NOT_EXIST(is_fork_initialized, IBV_FORK_DISABLED);
+	return FUNC_PTR(is_fork_initialized)();
+}
+
+DEFINE_WRAPPER_FUNC_IBV(node_type_str, const char *,
+			enum ibv_node_type node_type)
+{
+	RETURN_NOT_EXIST(node_type_str, NULL);
+	return FUNC_PTR(node_type_str)(node_type);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(port_state_str, const char *,
+			enum ibv_port_state port_state)
+{
+	RETURN_NOT_EXIST(port_state_str, NULL);
+	return FUNC_PTR(port_state_str)(port_state);
+}
+
 DEFINE_WRAPPER_FUNC_IBV(event_type_str, const char *, enum ibv_event_type event)
 {
 	RETURN_NOT_EXIST(event_type_str, NULL);
 	return FUNC_PTR(event_type_str)(event);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(resolve_eth_l2_from_gid, int,
+			struct ibv_context *context, struct ibv_ah_attr *attr,
+			uint8_t eth_mac[ETHERNET_LL_SIZE], uint16_t *vid)
+{
+	RETURN_NOT_EXIST(resolve_eth_l2_from_gid, EOPNOTSUPP);
+	return FUNC_PTR(resolve_eth_l2_from_gid)(context, attr, eth_mac, vid);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(set_ece, int, struct ibv_qp *qp, struct ibv_ece *ece)
+{
+	RETURN_NOT_EXIST(set_ece, EOPNOTSUPP);
+	return FUNC_PTR(set_ece)(qp, ece);
+}
+
+DEFINE_WRAPPER_FUNC_IBV(query_ece, int, struct ibv_qp *qp, struct ibv_ece *ece)
+{
+	RETURN_NOT_EXIST(query_ece, EOPNOTSUPP);
+	return FUNC_PTR(query_ece)(qp, ece);
 }
 
 // from driver.h
@@ -368,15 +436,19 @@ static __attribute__((constructor)) void ibverbs_init(void)
 	LOAD_FUNC_PTR_IBV(handle, reg_mr);
 	LOAD_FUNC_PTR_IBV(handle, reg_mr_iova);
 	LOAD_FUNC_PTR_IBV(handle, reg_mr_iova2);
+	LOAD_FUNC_PTR_IBV(handle, reg_dmabuf_mr);
 	LOAD_FUNC_PTR_IBV(handle, dereg_mr);
 	LOAD_FUNC_PTR_IBV(handle, create_comp_channel);
 	LOAD_FUNC_PTR_IBV(handle, destroy_comp_channel);
 	LOAD_FUNC_PTR_IBV(handle, create_cq);
+	LOAD_FUNC_PTR_IBV(handle, resize_cq);
 	LOAD_FUNC_PTR_IBV(handle, destroy_cq);
 	LOAD_FUNC_PTR_IBV(handle, get_cq_event);
 	LOAD_FUNC_PTR_IBV(handle, ack_cq_events);
 	LOAD_FUNC_PTR_IBV(handle, create_srq);
 	LOAD_FUNC_PTR_IBV(handle, destroy_srq);
+	LOAD_FUNC_PTR_IBV(handle, modify_srq);
+	LOAD_FUNC_PTR_IBV(handle, query_srq);
 	LOAD_FUNC_PTR_IBV(handle, create_qp);
 	LOAD_FUNC_PTR_IBV(handle, modify_qp);
 	LOAD_FUNC_PTR_IBV(handle, query_qp);
@@ -388,7 +460,13 @@ static __attribute__((constructor)) void ibverbs_init(void)
 	LOAD_FUNC_PTR_IBV(handle, attach_mcast);
 	LOAD_FUNC_PTR_IBV(handle, detach_mcast);
 	LOAD_FUNC_PTR_IBV(handle, fork_init);
+	LOAD_FUNC_PTR_IBV(handle, is_fork_initialized);
+	LOAD_FUNC_PTR_IBV(handle, node_type_str);
+	LOAD_FUNC_PTR_IBV(handle, port_state_str);
 	LOAD_FUNC_PTR_IBV(handle, event_type_str);
+	LOAD_FUNC_PTR_IBV(handle, resolve_eth_l2_from_gid);
+	LOAD_FUNC_PTR_IBV(handle, set_ece);
+	LOAD_FUNC_PTR_IBV(handle, query_ece);
 	// from driver.h
 	LOAD_FUNC_PTR_IBV(handle, get_sysfs_path);
 	LOAD_FUNC_PTR_IBV(handle, read_sysfs_file);
